@@ -9,7 +9,7 @@ public class ShowCommand extends Command {
     ArrayDeque<Movie> movies;
     public ShowCommand(MovieDeque movieDeque) {
         super("show", false, false);
-        this.movies = movieDeque.getCollection();
+        this.movies = movieDeque.getMovies();
     }
 
     @Override

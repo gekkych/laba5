@@ -22,8 +22,8 @@ public class UpdateCommand extends Command {
     @Override
     public void start(String argument) {
         long id = Long.parseLong(argument);
-        for (Movie movie : movies.getCollection()) {
-            if (movie.getID() == id) {
+        for (Movie movie : movies.getMovies()) {
+            if (movie.getId() == id) {
                 System.out.println("Введите название фильма или skip если хотите оставить таким же:");
                 String name = update();
                 if (!name.isEmpty()) {

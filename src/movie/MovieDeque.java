@@ -1,7 +1,10 @@
 package movie;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.*;
 
+@XmlRootElement
 public class MovieDeque {
     private final ArrayDeque<Movie> movies = new ArrayDeque<>();
     private final Set<Long> idSet = new HashSet<>();
@@ -17,7 +20,14 @@ public class MovieDeque {
             nextFreeID++;
         }
         idSet.add(nextFreeID);
-        movies.add(new Movie(nextFreeID, name, x, y, genre, mpaaRating, oscarCount, directorName, weight, height));
+        Movie newMovie = new Movie(nextFreeID, name, x, y, genre, mpaaRating, oscarCount, directorName, weight, height);
+        for(Movie movie : movies) {
+            if(movie.equals(newMovie)) {
+                System.out.println("Фильм уже есть в коллекции");
+                return;
+            }
+        }
+        movies.add(newMovie);
         sortMovieDeque();
     }
 
@@ -25,7 +35,7 @@ public class MovieDeque {
         Iterator<Movie> iterator = movies.iterator();
         while (iterator.hasNext()) {
             Movie movie = iterator.next();
-            if (movie.getID() == id) {
+            if (movie.getId() == id) {
                 iterator.remove();
                 idSet.remove(id);
                 nextFreeID = Math.min(nextFreeID, id);
@@ -37,7 +47,7 @@ public class MovieDeque {
 
     public void sortMovieDeque() {
         ArrayList<Movie> movieList = new ArrayList<>(movies);
-        movieList.sort(Comparator.comparingLong(Movie::getID));
+        movieList.sort(Comparator.comparingLong(Movie::getId));
         movies.clear();
         movies.addAll(movieList);
     }
@@ -50,13 +60,14 @@ public class MovieDeque {
         return creationDate;
     }
 
-    public ArrayDeque<Movie> getCollection() {
+    @XmlElement
+    public ArrayDeque<Movie> getMovies() {
         return movies;
     }
 
     public String toString() {
         return "Тип ArrayDeque" + "\n" +
                 "Создано " + getCreationDate() + "\n" +
-                "Количество элементов " + getCollection().size() + "\n";
+                "Количество элементов " + getMovies().size() + "\n";
     }
 }

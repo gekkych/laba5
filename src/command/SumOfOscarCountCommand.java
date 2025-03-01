@@ -13,7 +13,7 @@ public class SumOfOscarCountCommand extends Command{
     @Override
     public void start(String argument) {
         int oscarSum = 0;
-        for (Movie movie : movies.getCollection()) {
+        for (Movie movie : movies.getMovies()) {
             oscarSum += movie.getOscarsCount();
         }
         System.out.println("Сумма всех оскаров " + oscarSum);

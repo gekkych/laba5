@@ -1,10 +1,12 @@
 //Вариант 4326
 import command.*;
 import exception.InvalidArgumentException;
-import movie.MovieDeque;
-import movie.MovieGenre;
-import movie.MpaaRating;
+import movie.*;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -13,6 +15,8 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
     static MovieDeque movies = new MovieDeque();
     static HashMap<String, Command> commandMap = new HashMap<>();
+    static MovieXML saving = new MovieXML(movies, "save.xml");
+    static String file = "save.xml";
 
     public static void main(String[] args) {
         System.out.println(movies.getCreationDate());
@@ -35,7 +39,7 @@ public class Main {
         AverageOfOscarCountCommand averageOfOscar = new AverageOfOscarCountCommand(movies);
         InfoCommand info = new InfoCommand(movies);
         UpdateCommand update = new UpdateCommand(movies, scanner);
-        System.out.println("Hello World!");
+        SaveCommand save = new SaveCommand(saving);
 
         addCommand(help);
         addCommand(exit);
@@ -48,6 +52,7 @@ public class Main {
         addCommand(averageOfOscar);
         addCommand(info);
         addCommand(update);
+        addCommand(save);
     }
 
     public static void addCommand(Command command) {

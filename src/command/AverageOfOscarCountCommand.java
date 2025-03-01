@@ -13,10 +13,10 @@ public class AverageOfOscarCountCommand extends Command {
     @Override
     public void start(String argument) {
         int oscarSum = 0;
-        for (Movie movie : movies.getCollection()) {
+        for (Movie movie : movies.getMovies()) {
             oscarSum += movie.getOscarsCount();
         }
-        System.out.println("Среднее количество оскаров " + (oscarSum/movies.getCollection().size()));
+        System.out.println("Среднее количество оскаров " + (oscarSum/movies.getMovies().size()));
     }
 
     @Override
