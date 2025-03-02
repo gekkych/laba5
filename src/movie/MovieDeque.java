@@ -1,6 +1,7 @@
 package movie;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.*;
 
@@ -60,7 +61,8 @@ public class MovieDeque {
         return creationDate;
     }
 
-    @XmlElement
+    @XmlElementWrapper(name = "movies")
+    @XmlElement(name = "movie")
     public ArrayDeque<Movie> getMovies() {
         return movies;
     }

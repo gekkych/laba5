@@ -8,16 +8,13 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
 
-public class MovieXML {
-    MovieDeque movies;
+public class SaveManager {
     JAXBContext context;
     Marshaller marshaller;
     Unmarshaller unmarshaller;
     File file;
-    BufferedWriter writer;
 
-    public MovieXML(MovieDeque movies, String filePath) {
-        this.movies = movies;
+    public SaveManager(String filePath) {
         file = new File(filePath);
         try {
             context = JAXBContext.newInstance(MovieDeque.class);
@@ -29,17 +26,28 @@ public class MovieXML {
         }
     }
 
-    public void saveInXML() {
+    public void saveInXML(MovieDeque movies) {
         prepareSaveFile();
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-            writer.write(convertToXML().toString());
+            writer.write(convertToXML(movies).toString());
         } catch (IOException e) {
             throw new CommandException("");
         }
-
     }
 
-    public StringWriter convertToXML() throws CommandException {
+    public MovieDeque loadFromXML() {
+        if (!file.exists()) return new MovieDeque();
+        try {
+            MovieDeque result = (MovieDeque) unmarshaller.unmarshal(file);
+            if (result == null) return new MovieDeque();
+            return result;
+        } catch (JAXBException e) {
+            System.out.println("ошибка при загрузке, создана новая коллекция");
+            return new MovieDeque();
+        }
+    }
+
+    public StringWriter convertToXML(MovieDeque movies) throws CommandException {
         try {
             StringWriter stringWriter = new StringWriter();
             marshaller.marshal(movies, stringWriter);

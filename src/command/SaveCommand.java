@@ -1,22 +1,21 @@
 package command;
 
-import exception.CommandException;
 import movie.MovieDeque;
-import movie.MovieXML;
-
-import java.io.*;
+import movie.SaveManager;
 
 public class SaveCommand extends Command{
-    MovieXML movieXML;
+    MovieDeque movies;
+    SaveManager saveManager;
 
-    public SaveCommand(MovieXML movieXML) {
+    public SaveCommand(MovieDeque movies, SaveManager saveManager) {
         super("save", true, false);
-        this.movieXML = movieXML;
+        this.movies = movies;
+        this.saveManager = saveManager;
     }
 
     @Override
     public void start(String argument) {
-        movieXML.saveInXML();
+        saveManager.saveInXML(movies);
     }
     @Override
     public String description() {

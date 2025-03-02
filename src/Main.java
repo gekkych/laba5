@@ -3,25 +3,26 @@ import command.*;
 import exception.InvalidArgumentException;
 import movie.*;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import java.io.*;
 import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
     static final String GECKO = "\uD83E\uDD8E";
     static Scanner scanner = new Scanner(System.in);
-    static MovieDeque movies = new MovieDeque();
+    static MovieDeque movies;
+    static SaveManager saveManager;
+    static String filePath;
     static HashMap<String, Command> commandMap = new HashMap<>();
-    static MovieXML saving = new MovieXML(movies, "save.xml");
-    static String file = "save.xml";
 
     public static void main(String[] args) {
-        System.out.println(movies.getCreationDate());
-        movies.add("Человеческая многоножка", 10, 8.0, MovieGenre.COMEDY, MpaaRating.G, 8,"Том Сикс", 80, 170);
-        movies.add("Зелёный слоник", 156, 12.0, MovieGenre.COMEDY, MpaaRating.G, 100,"Светлана Баскова", 50, 175);
+        if (args.length > 0) {
+            filePath = args[0];
+        } else {
+            filePath = "save.xml";
+            System.out.println("Файл не указан, используется стандартный save.xml");
+        }
+        saveManager = new SaveManager(filePath);
+        movies = saveManager.loadFromXML();
 
         initializeCommands();
         input();
@@ -39,7 +40,7 @@ public class Main {
         AverageOfOscarCountCommand averageOfOscar = new AverageOfOscarCountCommand(movies);
         InfoCommand info = new InfoCommand(movies);
         UpdateCommand update = new UpdateCommand(movies, scanner);
-        SaveCommand save = new SaveCommand(saving);
+        SaveCommand save = new SaveCommand(movies, saveManager);
 
         addCommand(help);
         addCommand(exit);
@@ -53,6 +54,7 @@ public class Main {
         addCommand(info);
         addCommand(update);
         addCommand(save);
+
     }
 
     public static void addCommand(Command command) {
