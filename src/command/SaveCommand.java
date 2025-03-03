@@ -16,6 +16,7 @@ public class SaveCommand extends Command{
     @Override
     public void start(String argument) {
         saveManager.saveInXML(movies);
+        System.out.println("Коллекция сохранена в файл " + saveManager.getFileName());
     }
     @Override
     public String description() {

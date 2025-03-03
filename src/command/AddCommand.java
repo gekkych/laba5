@@ -3,13 +3,14 @@ package command;
 import movie.MovieDeque;
 import movie.MovieGenre;
 import movie.MpaaRating;
+import movie.Person;
 
 import java.util.Scanner;
 
-public class AddCommand extends Command{
-    static final String GECKO = "\uD83E\uDD8E";
+public class AddCommand extends Command {
     private final MovieDeque movies;
     private final Scanner scanner;
+
     public AddCommand(MovieDeque movies, Scanner scanner) {
         super("add", false, false);
         this.movies = movies;
@@ -18,54 +19,25 @@ public class AddCommand extends Command{
 
     @Override
     public void start(String argument) {
-        System.out.println("Введите название фильма:");
-        System.out.print(GECKO + " > " );
-        String name = scanner.nextLine().trim();
+        String title = movies.inputTitle(scanner);
+        int x = movies.inputX(scanner);
+        Double y = movies.inputY(scanner);
+        MovieGenre genre = movies.inputGenre(scanner);
+        MpaaRating rating = movies.inputRating(scanner);
+        int oscarCount = movies.inputOscarCount(scanner);
+        Person director = movies.inputDirector(scanner);
 
-        System.out.println("Введите координату X:");
-        System.out.print(GECKO + " > " );
-        int x = Integer.parseInt(scanner.nextLine().trim());
-
-        System.out.println("Введите координату Y:");
-        System.out.print(GECKO + " > " );
-        Double y = Double.parseDouble(scanner.nextLine().trim());
-
-        System.out.println("Введите жанр фильма:");
-        System.out.print(GECKO + " > " );
-        MovieGenre movieGenre = switch (scanner.nextLine().trim().toLowerCase()) {
-            case "action" -> MovieGenre.ACTION;
-            case "comedy" -> MovieGenre.COMEDY;
-            case "science fiction" -> MovieGenre.SCIENCE_FICTION;
-            default -> null;
-        };
-
-        System.out.println("Введите возрастной рейтинг фильма");
-        System.out.print(GECKO + " > " );
-        MpaaRating mpaaRating = switch (scanner.nextLine().trim().toLowerCase()) {
-            case "g" -> MpaaRating.G;
-            case "pg" -> MpaaRating.PG;
-            case "pg 13" -> MpaaRating.PG_13;
-            case "nc 17" -> MpaaRating.NC_17;
-            default -> null;
-        };
-
-        System.out.println("Введите количество оскаров");
-        System.out.print(GECKO + " > " );
-        int oscarCount = Integer.parseInt(scanner.nextLine().trim());
-
-        System.out.println("Введите имя директора:");
-        System.out.print(GECKO + " > " );
-        String directorName = scanner.nextLine().trim();
-
-        System.out.println("Введите вес режиссёра:");
-        System.out.print(GECKO + " > " );
-        int directorWeight = Integer.parseInt(scanner.nextLine().trim());
-
-        System.out.println("Введите рост режиссёра:");
-        System.out.print(GECKO + " > " );
-        int directorHeight = Integer.parseInt(scanner.nextLine().trim());
-
-        movies.add(name, x, y, movieGenre, mpaaRating, oscarCount, directorName, directorWeight, directorHeight);
+        if (director != null) {
+            if (director.getBirthday() != null) {
+                movies.add(title, x, y, genre, rating, oscarCount, director.getName(), director.getBirthday(), director.getHeight(), director.getWeight());
+            } else {
+                movies.add(title, x, y, genre, rating, oscarCount, director.getName(), director.getHeight(), director.getWeight());
+            }
+            System.out.println("Фильм успешно добавлен в коллекцию");
+            return;
+        }
+        movies.add(title, x, y, genre, rating, oscarCount);
+        System.out.println("Фильм успешно добавлен в коллекцию");
     }
 
     @Override

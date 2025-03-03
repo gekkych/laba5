@@ -7,6 +7,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.io.*;
+import java.util.Scanner;
 
 public class SaveManager {
     JAXBContext context;
@@ -26,6 +27,10 @@ public class SaveManager {
         }
     }
 
+    public String getFileName() {
+        return file.getName();
+    }
+
     public void saveInXML(MovieDeque movies) {
         prepareSaveFile();
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
@@ -37,11 +42,19 @@ public class SaveManager {
 
     public MovieDeque loadFromXML() {
         if (!file.exists()) return new MovieDeque();
-        try {
-            MovieDeque result = (MovieDeque) unmarshaller.unmarshal(file);
+        try (Scanner scanner = new Scanner(file)) {
+            StringBuilder xmlContent = new StringBuilder();
+            while (scanner.hasNextLine()) {
+                xmlContent.append(scanner.nextLine()).append("\n");
+            }
+            if (xmlContent.isEmpty()) {
+                return new MovieDeque();
+            }
+            StringReader stringReader = new StringReader(xmlContent.toString());
+            MovieDeque result = (MovieDeque) unmarshaller.unmarshal(stringReader);
             if (result == null) return new MovieDeque();
             return result;
-        } catch (JAXBException e) {
+        } catch (JAXBException | FileNotFoundException e) {
             System.out.println("ошибка при загрузке, создана новая коллекция");
             return new MovieDeque();
         }

@@ -2,8 +2,9 @@ package command;
 
 import movie.MovieDeque;
 
-public class RemoveByIdCommand extends Command{
+public class RemoveByIdCommand extends Command {
     private final MovieDeque movies;
+
     public RemoveByIdCommand(MovieDeque movies) {
         super("remove_by_id", true, false);
         this.movies = movies;

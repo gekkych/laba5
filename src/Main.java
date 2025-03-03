@@ -1,5 +1,6 @@
 //Вариант 4326
 import command.*;
+import exception.DequeException;
 import exception.InvalidArgumentException;
 import movie.*;
 
@@ -22,10 +23,18 @@ public class Main {
             System.out.println("Файл не указан, используется стандартный save.xml");
         }
         saveManager = new SaveManager(filePath);
-        movies = saveManager.loadFromXML();
+        try {
+            movies = saveManager.loadFromXML();
+            for (Movie movie : movies.getMovies()) {
+                System.out.println(movie.getId() + " " + movie.getTitle());
+            }
+            movies.manageDeque();
 
-        initializeCommands();
-        input();
+            initializeCommands();
+            input();
+        } catch (DequeException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void initializeCommands() {

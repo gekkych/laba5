@@ -3,6 +3,7 @@ package movie;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -18,7 +19,14 @@ public class Person {
 
     }
 
-    public Person(String name, int weight, int height) {
+    public Person(String name, LocalDate birthday, int height, int weight) {
+        setName(name);
+        setBirthday(birthday);
+        setWeight(weight);
+        setHeight(height);
+    }
+
+    public Person(String name, int height, int weight) {
         setName(name);
         setWeight(weight);
         setHeight(height);
@@ -30,6 +38,7 @@ public class Person {
     }
 
     @XmlElement
+    @XmlJavaTypeAdapter(LocalDateAdapter.class)
     public LocalDate getBirthday() {
         return birthday;
     }
@@ -46,30 +55,29 @@ public class Person {
 
     public void setName(String name) {
         Objects.requireNonNull(name, "Строка не должна быть null");
-        if(name.isEmpty()) {
-            return;
-        }
         this.name = name;
     }
 
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+
     public void setWeight(int weight) {
-        if(weight < 0) {
-            return;
-        }
         this.weight = weight;
     }
 
     public void setHeight(int height) {
-        if(height < 0) {
-            return;
-        }
         this.height = height;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {return true;}
-        if (o == null || getClass() != o.getClass()) {return false;}
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Person person = (Person) o;
         return name.equals(person.name) &&
                 height == person.height &&
