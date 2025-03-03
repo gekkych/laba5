@@ -1,5 +1,7 @@
 package movie;
 
+import exception.MovieFieldException;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -10,6 +12,7 @@ import java.util.Objects;
 @XmlRootElement
 @XmlType(propOrder = {"name", "birthday", "height", "weight"})
 public class Person {
+    private final MovieValidator validator = new MovieValidator();
     private String name; //Поле не может быть null, Строка не может быть пустой
     private java.time.LocalDate birthday; //Поле может быть null
     private int height; //Значение поля должно быть больше 0
@@ -37,7 +40,7 @@ public class Person {
         return name;
     }
 
-    @XmlElement
+    @XmlElement(nillable = true)
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     public LocalDate getBirthday() {
         return birthday;
@@ -54,7 +57,7 @@ public class Person {
     }
 
     public void setName(String name) {
-        Objects.requireNonNull(name, "Строка не должна быть null");
+        if (!validator.validateDirectorName(name)) throw new MovieFieldException("Ошибка при создании/обновлении элемента коллекции");
         this.name = name;
     }
 
@@ -63,10 +66,12 @@ public class Person {
     }
 
     public void setWeight(int weight) {
+        if (!validator.validateDirectorWeight(weight)) throw new MovieFieldException("Ошибка при создании/обновлении элемента коллекции");
         this.weight = weight;
     }
 
     public void setHeight(int height) {
+        if (!validator.validateDirectorHeight(height)) throw new MovieFieldException("Ошибка при создании/обновлении элемента коллекции");
         this.height = height;
     }
 

@@ -32,12 +32,12 @@ public class UpdateCommand extends Command {
                     Person director = movies.inputDirector(scanner);
 
                     movie.setTitle(title);
-                    movie.setCoordinates(x, y);
+                    movie.setCoordinates(new Coordinates(x, y));
                     movie.setGenre(genre);
                     movie.setMpaaRating(rating);
                     movie.setOscarsCount(oscarCount);
                     if (director != null) {
-                        movie.setDirector(director.getName(), director.getBirthday(), director.getHeight(), director.getWeight());
+                        movie.setDirector(new Person(director.getName(), director.getBirthday(), director.getHeight(), director.getWeight()));
                         System.out.println("Фильм успешно обновлён");
                     }
                 }

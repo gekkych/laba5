@@ -5,6 +5,7 @@ import exception.IdException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -16,16 +17,12 @@ public class MovieDeque {
     private final ArrayDeque<Movie> movies = new ArrayDeque<>();
     private final Set<Long> idSet = new HashSet<>();
     private long nextFreeID = 1;
-    private final Date creationDate;
+    private Date creationDate;
     static final String GECKO = "\uD83E\uDD8E";
 
 
     public MovieDeque() {
-        creationDate = new Date();
-    }
-
-    public Set<Long> getIdSet() {
-        return idSet;
+        setCreationDate(new Date());
     }
 
     public void manageDeque() {
@@ -161,16 +158,21 @@ public class MovieDeque {
         final String[] CONFIRMATION_WORDS = {"y", "yes"};
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String directorName;
-        LocalDate birthday;
+        LocalDate birthday = null;
         int height;
         int weight;
+        boolean confirmed = false;
         System.out.println("Вы хотите ввести информацию о режиссёре? [y/n]:");
         System.out.print(GECKO + " > ");
         String input = scanner.nextLine().trim();
         for (String word : CONFIRMATION_WORDS) {
-            if (!input.equalsIgnoreCase(word)) {
-                return null;
+            if (input.equalsIgnoreCase(word)) {
+                confirmed = true;
+                break;
             }
+        }
+        if (!confirmed) {
+            return null;
         }
 
         while (true) {
@@ -186,12 +188,11 @@ public class MovieDeque {
             System.out.print(GECKO + " > ");
             String birthdayInput = scanner.nextLine().trim();
             if (birthdayInput.isEmpty()) {
-                return null;
+                break;
             }
             try {
                 birthday = LocalDate.parse(birthdayInput, formatter);
-                if (validator.validateDirectorBirthday(birthday)) break;
-                System.out.println("Неверный ввод, попробуйте ещё раз");
+                break;
             } catch (DateTimeParseException e) {
                 System.out.println("Неверный ввод, попробуйте ещё раз");
             }
@@ -220,7 +221,11 @@ public class MovieDeque {
                 System.out.println("Неверный ввод, попробуйте ещё раз");
             }
         }
-        return new Person(directorName, birthday, height, weight);
+        if (birthday != null) {
+            return new Person(directorName, birthday, height, weight);
+        } else {
+            return new Person(directorName, height, weight);
+        }
     }
 
     public void removeById(long id) {
@@ -247,10 +252,17 @@ public class MovieDeque {
 
     public void resetId() {
         nextFreeID = 1;
+        idSet.clear();
     }
 
+    @XmlElement
+    @XmlJavaTypeAdapter(DateAdapter.class)
     public Date getCreationDate() {
         return creationDate;
+    }
+
+    public void setCreationDate(Date date) {
+        this.creationDate = date;
     }
 
     @XmlElementWrapper(name = "movies")

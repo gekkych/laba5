@@ -1,5 +1,7 @@
 package movie;
 
+import exception.MovieFieldException;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -10,6 +12,7 @@ import java.util.Objects;
 @XmlRootElement
 @XmlType(propOrder = {"id", "title", "genre", "mpaaRating", "director", "oscarsCount", "coordinates", "creationDate"})
 public class Movie implements Comparable<Movie> {
+    private final MovieValidator validator = new MovieValidator();
     private long id; //Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     private String title; //Поле не может быть null, Строка не может быть пустой
     private Coordinates coordinates; //Поле не может быть null
@@ -25,18 +28,18 @@ public class Movie implements Comparable<Movie> {
     protected Movie(long id, String title, int x, Double y, MovieGenre genre, MpaaRating mpaaRating, int oscarsCount, String directorName, LocalDate birthday, int weight, int height) {
         this.id = id;
         setTitle(title);
-        setCoordinates(x, y);
+        setCoordinates(new Coordinates(x, y));
         this.creationDate = new Date();
         setGenre(genre);
         setMpaaRating(mpaaRating);
         this.oscarsCount = oscarsCount;
-        setDirector(directorName, birthday, weight, height);
+        setDirector(new Person(directorName, birthday, weight, height));
     }
 
     protected Movie(long id, String title, int x, Double y, MovieGenre genre, MpaaRating mpaaRating, int oscarsCount) {
         this.id = id;
         setTitle(title);
-        setCoordinates(x, y);
+        setCoordinates(new Coordinates(x, y));
         this.creationDate = new Date();
         setGenre(genre);
         setMpaaRating(mpaaRating);
@@ -46,12 +49,12 @@ public class Movie implements Comparable<Movie> {
     protected Movie(long id, String title, int x, Double y, MovieGenre genre, MpaaRating mpaaRating, int oscarsCount, String directorName, int weight, int height) {
         this.id = id;
         setTitle(title);
-        setCoordinates(x, y);
+        setCoordinates(new Coordinates(x, y));
         this.creationDate = new Date();
         setGenre(genre);
         setMpaaRating(mpaaRating);
         this.oscarsCount = oscarsCount;
-        setDirector(directorName, height, weight);
+        setDirector(new Person(directorName, height, weight));
     }
 
     @Override
@@ -60,6 +63,8 @@ public class Movie implements Comparable<Movie> {
     }
 
     public void setTitle(String title) {
+        if (!validator.validateTitle(title))
+            throw new MovieFieldException("Ошибка при создании/обновлении элемента коллекции");
         this.title = title;
     }
 
@@ -78,13 +83,13 @@ public class Movie implements Comparable<Movie> {
         return genre;
     }
 
-    @XmlElement
+    @XmlElement(nillable = true)
     public MpaaRating getMpaaRating() {
         return mpaaRating;
     }
 
-    public void setCoordinates(int x, Double y) { // реализовать проверку на null
-        this.coordinates = new Coordinates(x, y);
+    public void setCoordinates(Coordinates coordinates) {
+        this.coordinates = coordinates;
     }
 
     @XmlElement
@@ -93,10 +98,14 @@ public class Movie implements Comparable<Movie> {
     }
 
     public void setOscarsCount(int count) {
+        if (!validator.validateOscarCount(count))
+            throw new MovieFieldException("Ошибка при создании/обновлении элемента коллекции");
         this.oscarsCount = count;
     }
 
     public void setGenre(MovieGenre genre) { // реализовать проверку на null
+        if (!validator.validateGenre(genre))
+            throw new MovieFieldException("Ошибка при создании/обновлении элемента коллекции");
         this.genre = genre;
     }
 
@@ -104,16 +113,11 @@ public class Movie implements Comparable<Movie> {
         this.mpaaRating = rating;
     }
 
-    public void setDirector(String name, LocalDate birthday, int height, int weight) {
-        this.director = new Person(name, birthday, height, weight);
+    public void setDirector(Person director) {
+        this.director = director;
     }
 
-    public void setDirector(String name, int height, int weight) {
-        this.director = new Person(name, height, weight);
-    }
-
-
-    @XmlElement
+    @XmlElement(nillable = true)
     public Person getDirector() {
         return director;
     }
@@ -121,6 +125,10 @@ public class Movie implements Comparable<Movie> {
     @XmlElement
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     @XmlElement
@@ -147,7 +155,19 @@ public class Movie implements Comparable<Movie> {
 
     @Override
     public String toString() {
-        return id + " " + title;
+        StringBuilder builder = new StringBuilder();
+        builder.append("(").append(id).append(")").append(" ").append(title).append("   Количество Оскаров ").append(oscarsCount);
+        if (mpaaRating != null) {
+            builder.append("    Возрастное ограничение ").append(mpaaRating);
+        }
+        if (director != null) {
+            builder.append("    Режиссёр ").append(director.getName());
+            if (director.getBirthday() != null) {
+                builder.append(" ").append(director.getBirthday());
+            }
+        }
+
+        return builder.toString();
     }
 
 }

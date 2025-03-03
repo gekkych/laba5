@@ -2,10 +2,7 @@ package movie;
 
 import exception.CommandException;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.*;
 import java.io.*;
 import java.util.Scanner;
 
@@ -14,6 +11,7 @@ public class SaveManager {
     Marshaller marshaller;
     Unmarshaller unmarshaller;
     File file;
+    MovieValidator validator = new MovieValidator();
 
     public SaveManager(String filePath) {
         file = new File(filePath);
@@ -26,14 +24,13 @@ public class SaveManager {
             throw new CommandException("");
         }
     }
-
     public String getFileName() {
         return file.getName();
     }
 
     public void saveInXML(MovieDeque movies) {
         prepareSaveFile();
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write(convertToXML(movies).toString());
         } catch (IOException e) {
             throw new CommandException("");
@@ -53,6 +50,7 @@ public class SaveManager {
             StringReader stringReader = new StringReader(xmlContent.toString());
             MovieDeque result = (MovieDeque) unmarshaller.unmarshal(stringReader);
             if (result == null) return new MovieDeque();
+
             return result;
         } catch (JAXBException | FileNotFoundException e) {
             System.out.println("ошибка при загрузке, создана новая коллекция");
@@ -70,7 +68,7 @@ public class SaveManager {
         }
     }
 
-    private void prepareSaveFile() throws CommandException{
+    private void prepareSaveFile() throws CommandException {
         try {
             if (!file.exists()) {
                 if (file.createNewFile()) {
@@ -81,7 +79,6 @@ public class SaveManager {
             throw new CommandException("");
         }
     }
-
 
 
 }

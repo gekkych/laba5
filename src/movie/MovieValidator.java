@@ -24,10 +24,6 @@ public class MovieValidator {
         return !(directorName == null) && !directorName.isEmpty();
     }
 
-    public boolean validateDirectorBirthday(LocalDate birthday) {
-        return birthday != null;
-    }
-
     public boolean validateDirectorHeight(int height) {
         return height > 0;
     }

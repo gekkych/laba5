@@ -1,5 +1,7 @@
 package movie;
 
+import exception.MovieFieldException;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -7,6 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 @XmlType(propOrder = {"x", "y"})
 public class Coordinates {
+    private final MovieValidator validator = new MovieValidator();
     private int x;
     private Double y; //Максимальное значение поля: 102, Поле не может быть null
 
@@ -27,10 +30,9 @@ public class Coordinates {
         return x;
     }
 
-    public void setY(Double y) {
-        if(y > 102) {
-            return;
-        }
+    public void setY(Double y){
+        if (!validator.validateY(y))
+            throw new MovieFieldException("Ошибка при создании/обновлении элемента коллекции");
         this.y = y;
     }
 

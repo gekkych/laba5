@@ -2,8 +2,10 @@
 import command.*;
 import exception.DequeException;
 import exception.InvalidArgumentException;
+import exception.MovieFieldException;
 import movie.*;
 
+import javax.xml.bind.ValidationException;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -25,14 +27,11 @@ public class Main {
         saveManager = new SaveManager(filePath);
         try {
             movies = saveManager.loadFromXML();
-            for (Movie movie : movies.getMovies()) {
-                System.out.println(movie.getId() + " " + movie.getTitle());
-            }
             movies.manageDeque();
 
             initializeCommands();
             input();
-        } catch (DequeException e) {
+        } catch (DequeException | MovieFieldException  e) {
             System.out.println(e.getMessage());
         }
     }
@@ -50,6 +49,9 @@ public class Main {
         InfoCommand info = new InfoCommand(movies);
         UpdateCommand update = new UpdateCommand(movies, scanner);
         SaveCommand save = new SaveCommand(movies, saveManager);
+        AddIfMaxCommand addIfMax = new AddIfMaxCommand(movies, scanner);
+        AddIfMinCommand addIfMin = new AddIfMinCommand(movies, scanner);
+        RemoveIfLowerCommand removeIfLower = new RemoveIfLowerCommand(movies, scanner);
 
         addCommand(help);
         addCommand(exit);
@@ -63,7 +65,9 @@ public class Main {
         addCommand(info);
         addCommand(update);
         addCommand(save);
-
+        addCommand(addIfMax);
+        addCommand(addIfMin);
+        addCommand(removeIfLower);
     }
 
     public static void addCommand(Command command) {
