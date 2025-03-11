@@ -3,7 +3,9 @@ package command;
 import movie.Movie;
 import movie.MovieDeque;
 
-public class AverageOfOscarCountCommand extends Command {
+public class
+
+AverageOfOscarCountCommand extends Command {
     private final MovieDeque movies;
     public AverageOfOscarCountCommand(MovieDeque movies) {
         super("average_of_oscar_count", false, false);

@@ -5,7 +5,6 @@ import exception.InvalidArgumentException;
 import exception.MovieFieldException;
 import movie.*;
 
-import javax.xml.bind.ValidationException;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -52,6 +51,7 @@ public class Main {
         AddIfMaxCommand addIfMax = new AddIfMaxCommand(movies, scanner);
         AddIfMinCommand addIfMin = new AddIfMinCommand(movies, scanner);
         RemoveIfLowerCommand removeIfLower = new RemoveIfLowerCommand(movies, scanner);
+        GroupByIdCommand groupById = new GroupByIdCommand(movies);
 
         addCommand(help);
         addCommand(exit);
@@ -68,6 +68,7 @@ public class Main {
         addCommand(addIfMax);
         addCommand(addIfMin);
         addCommand(removeIfLower);
+        addCommand(groupById);
     }
 
     public static void addCommand(Command command) {

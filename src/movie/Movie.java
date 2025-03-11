@@ -156,7 +156,7 @@ public class Movie implements Comparable<Movie> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("(").append(id).append(")").append(" ").append(title).append("   Количество Оскаров ").append(oscarsCount);
+        builder.append("(").append(id).append(")").append(" ").append(title).append("   Жанр ").append(getGenre()).append("   Количество Оскаров ").append(oscarsCount);
         if (mpaaRating != null) {
             builder.append("    Возрастное ограничение ").append(mpaaRating);
         }
